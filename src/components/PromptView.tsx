@@ -5,6 +5,7 @@ import { AttachButton, ConnectSourceDialog } from "@/components/ConnectSource";
 interface PromptViewProps {
   projectName: string;
   onProjectNameChange: (name: string) => void;
+  onGenerate: () => void;
 }
 
 const suggestions = [
@@ -14,8 +15,8 @@ const suggestions = [
   "Generate a keynote speech outline on innovation",
 ];
 
-const PromptView = ({ projectName, onProjectNameChange }: PromptViewProps) => {
-  const [prompt, setPrompt] = useState("");
+const PromptView = ({ projectName, onProjectNameChange, onGenerate }: PromptViewProps) => {
+  const [prompt, setPrompt] = useState("Analyze our content library and identify the most impactful video moments for thought leadership. Focus on executive insights, industry trends, and customer success stories that can be repurposed across LinkedIn, blog posts, and keynote presentations.");
   const [isEditingName, setIsEditingName] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
   const [editValue, setEditValue] = useState(projectName);
@@ -104,8 +105,10 @@ const PromptView = ({ projectName, onProjectNameChange }: PromptViewProps) => {
               />
               <button
                 disabled={!prompt.trim()}
-                className="p-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90 transition-opacity"
+                onClick={onGenerate}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium disabled:opacity-40 hover:opacity-90 transition-opacity"
               >
+                Generate
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
