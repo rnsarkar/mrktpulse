@@ -56,7 +56,11 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">
                 <span className="hover:text-foreground cursor-pointer transition-colors">Projects</span>
                 <span className="mx-1">/</span>
-                <span className="text-foreground">{projectName}</span>
+                <input
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="text-foreground bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none transition-colors"
+                />
               </p>
               <h1 className="text-2xl font-semibold text-foreground mt-1">
                 Thought Leadership Content
@@ -72,7 +76,11 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">
                 <span className="hover:text-foreground cursor-pointer transition-colors">Projects</span>
                 <span className="mx-1">/</span>
-                <span className="text-foreground">{projectName}</span>
+                <input
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="text-foreground bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none transition-colors"
+                />
               </p>
               <h1 className="text-2xl font-semibold text-foreground mt-1">
                 Clip Selection
@@ -88,7 +96,11 @@ const Index = () => {
               <p className="text-sm text-muted-foreground">
                 <span className="hover:text-foreground cursor-pointer transition-colors">Projects</span>
                 <span className="mx-1">/</span>
-                <span className="text-foreground">{projectName}</span>
+                <input
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="text-foreground bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none transition-colors"
+                />
               </p>
               <h1 className="text-2xl font-semibold text-foreground mt-1">
                 Social Content
