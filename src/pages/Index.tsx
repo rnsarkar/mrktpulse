@@ -6,18 +6,21 @@ import ScanningView from "@/components/ScanningView";
 import ClipAnalysisView from "@/components/ClipAnalysisView";
 import SocialPostsView from "@/components/SocialPostsView";
 import AEOAnalysisView from "@/components/AEOAnalysisView";
+import ProjectsView from "@/components/ProjectsView";
 
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
-  const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts" | "aeo">("home");
+  const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts" | "aeo" | "projects">("home");
   const [projectName, setProjectName] = useState("Untitled Project");
   const [initialPrompt, setInitialPrompt] = useState("");
+  const [savedProject, setSavedProject] = useState<{ name: string; postsCount: number } | null>(null);
 
   return (
     <div className="flex h-screen bg-canvas">
       <AppSidebar activeItem={activeItem} onItemClick={(item) => {
         setActiveItem(item);
         if (item === "home") setView("home");
+        if (item === "projects") setView("projects");
         if (item === "aeo-analysis") setView("aeo");
       }} />
 
@@ -91,7 +94,19 @@ const Index = () => {
                 Social Content
               </h1>
             </div>
-            <SocialPostsView projectName={projectName} onBack={() => setView("clips")} />
+            <SocialPostsView
+              projectName={projectName}
+              onBack={() => setView("clips")}
+              onClose={() => {
+                setView("projects");
+                setActiveItem("projects");
+              }}
+              onSaveAndClose={() => {
+                setSavedProject({ name: projectName, postsCount: 12 });
+                setView("projects");
+                setActiveItem("projects");
+              }}
+            />
           </div>
         )}
 
@@ -104,6 +119,10 @@ const Index = () => {
               setActiveItem("projects");
             }}
           />
+        )}
+
+        {view === "projects" && (
+          <ProjectsView savedProject={savedProject} />
         )}
       </main>
     </div>

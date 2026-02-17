@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check, Zap, CheckCircle2, Rocket } from "lucide-react";
+import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check, Zap, CheckCircle2, Rocket, X, Save } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -377,6 +377,8 @@ const IndustryRoleSelector = ({ selectedIndustries, setSelectedIndustries, selec
 interface SocialPostsViewProps {
   projectName: string;
   onBack: () => void;
+  onClose?: () => void;
+  onSaveAndClose?: () => void;
 }
 
 const platformConfig = {
@@ -385,7 +387,7 @@ const platformConfig = {
   x: { label: "X", icon: Twitter, color: "text-foreground" },
 };
 
-const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
+const SocialPostsView = ({ projectName, onBack, onClose, onSaveAndClose }: SocialPostsViewProps) => {
   const [generating, setGenerating] = useState(true);
   const [progress, setProgress] = useState(0);
   const [activeTab, setActiveTab] = useState<"all" | "linkedin" | "meta" | "x">("all");
@@ -518,6 +520,18 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
             <h2 className="text-lg font-semibold text-foreground">Generated Social Content</h2>
           </div>
           <div className="flex items-center gap-2">
+            {onClose && (
+              <Button onClick={onClose} variant="outline" size="sm" className="gap-2">
+                <X className="w-4 h-4" />
+                Close
+              </Button>
+            )}
+            {onSaveAndClose && (
+              <Button onClick={onSaveAndClose} variant="secondary" size="sm" className="gap-2">
+                <Save className="w-4 h-4" />
+                Save & Close
+              </Button>
+            )}
             {selectedPostIds.size > 0 && (
               <Button onClick={handleActivate} size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
                 <Rocket className="w-4 h-4" />
