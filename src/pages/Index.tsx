@@ -3,10 +3,12 @@ import AppSidebar from "@/components/AppSidebar";
 import ThoughtLeadershipCard from "@/components/ThoughtLeadershipCard";
 import PromptView from "@/components/PromptView";
 import ScanningView from "@/components/ScanningView";
+import ClipAnalysisView from "@/components/ClipAnalysisView";
+import SocialPostsView from "@/components/SocialPostsView";
 
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
-  const [view, setView] = useState<"home" | "prompt" | "scanning">("home");
+  const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts">("home");
   const [projectName, setProjectName] = useState("Untitled Project");
 
   return (
@@ -53,7 +55,39 @@ const Index = () => {
                 Thought Leadership Content
               </h1>
             </div>
-            <ScanningView projectName={projectName} onBack={() => setView("prompt")} onNext={(ids) => { console.log("Selected videos:", ids); }} />
+            <ScanningView projectName={projectName} onBack={() => setView("prompt")} onNext={() => setView("clips")} />
+          </div>
+        )}
+
+        {view === "clips" && (
+          <div className="flex flex-col h-full">
+            <div className="px-8 pt-6 pb-1">
+              <p className="text-sm text-muted-foreground">
+                <span className="hover:text-foreground cursor-pointer transition-colors">Projects</span>
+                <span className="mx-1">/</span>
+                <span className="text-foreground">{projectName}</span>
+              </p>
+              <h1 className="text-2xl font-semibold text-foreground mt-1">
+                Clip Selection
+              </h1>
+            </div>
+            <ClipAnalysisView projectName={projectName} onBack={() => setView("scanning")} onNext={() => setView("posts")} />
+          </div>
+        )}
+
+        {view === "posts" && (
+          <div className="flex flex-col h-full">
+            <div className="px-8 pt-6 pb-1">
+              <p className="text-sm text-muted-foreground">
+                <span className="hover:text-foreground cursor-pointer transition-colors">Projects</span>
+                <span className="mx-1">/</span>
+                <span className="text-foreground">{projectName}</span>
+              </p>
+              <h1 className="text-2xl font-semibold text-foreground mt-1">
+                Social Content
+              </h1>
+            </div>
+            <SocialPostsView projectName={projectName} onBack={() => setView("clips")} />
           </div>
         )}
       </main>

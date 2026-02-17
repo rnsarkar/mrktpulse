@@ -27,7 +27,7 @@ const mockVideos = [
 interface ScanningViewProps {
   projectName: string;
   onBack: () => void;
-  onNext: (selectedIds: number[]) => void;
+  onNext: (selectedIds?: number[]) => void;
 }
 
 const ScanningView = ({ projectName, onBack, onNext }: ScanningViewProps) => {
