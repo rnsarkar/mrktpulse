@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check } from "lucide-react";
+import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check, Zap, CheckCircle2, Rocket } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -69,15 +69,52 @@ const mockPosts: SocialPost[] = [
 ];
 
 const alignmentConfig = {
-  high: { label: "High", icon: ShieldCheck, className: "bg-emerald-500/90 text-white" },
-  medium: { label: "Medium", icon: Shield, className: "bg-amber-500/90 text-white" },
-  low: { label: "Low", icon: ShieldAlert, className: "bg-red-500/90 text-white" },
+  high: { label: "High", icon: ShieldCheck, className: "bg-emerald-500/90 text-white", detailColor: "text-emerald-500", description: "Strong brand alignment", details: ["Visual identity matches brand guidelines", "Messaging tone is consistent with brand voice", "CTA aligns with campaign objectives", "Audience targeting matches brand persona"] },
+  medium: { label: "Medium", icon: Shield, className: "bg-amber-500/90 text-white", detailColor: "text-amber-500", description: "Moderate brand alignment", details: ["Some messaging deviates from brand guidelines", "Visual elements could be more on-brand", "CTA may need refinement for target audience", "Consider adjusting tone for better consistency"] },
+  low: { label: "Low", icon: ShieldAlert, className: "bg-red-500/90 text-white", detailColor: "text-destructive", description: "Weak brand alignment", details: ["Messaging significantly deviates from brand voice", "Visual assets need brand review", "CTA does not match campaign goals", "Audience targeting may be misaligned", "Recommend full creative revision before publishing"] },
 };
 
 const resonanceConfig = {
   high: { label: "Strong", color: "bg-emerald-500/90 text-white" },
   medium: { label: "Mixed", color: "bg-amber-500/90 text-white" },
   low: { label: "Weak", color: "bg-red-500/90 text-white" },
+};
+
+const BrandAlignmentModal = ({ open, onClose, post }: { open: boolean; onClose: () => void; post: SocialPost }) => {
+  const config = alignmentConfig[post.brandAlignment];
+  const AlignIcon = config.icon;
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlignIcon className={`w-5 h-5 ${config.detailColor}`} />
+            Brand Alignment Score
+          </DialogTitle>
+          <DialogDescription>
+            Brand consistency analysis for this {post.platform === "meta" ? "META" : post.platform === "x" ? "X" : "LinkedIn"} {post.format} post
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground">Score:</span>
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${config.className}`}>{config.label} Alignment</span>
+          </div>
+          <p className="text-sm text-muted-foreground">{config.description}</p>
+          <div>
+            <h4 className="text-sm font-semibold text-foreground mb-2">Assessment Details</h4>
+            <ul className="space-y-1.5">
+              {config.details.map((d, i) => (
+                <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
+                  <span className={`w-1 h-1 rounded-full mt-1.5 flex-shrink-0 ${post.brandAlignment === "high" ? "bg-emerald-500" : post.brandAlignment === "medium" ? "bg-amber-500" : "bg-destructive"}`} />{d}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 };
 
 const ResonanceFeedbackModal = ({ open, onClose, result, post }: { open: boolean; onClose: () => void; result: ResonanceResult; post: SocialPost }) => {
@@ -129,7 +166,7 @@ const ResonanceFeedbackModal = ({ open, onClose, result, post }: { open: boolean
   );
 };
 
-const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; resonance?: ResonanceResult; onResonanceClick?: () => void }) => {
+const PostMockup = ({ post, resonance, onResonanceClick, onBrandClick, isSelected, onSelect, isPublished }: { post: SocialPost; resonance?: ResonanceResult; onResonanceClick?: () => void; onBrandClick?: () => void; isSelected?: boolean; onSelect?: () => void; isPublished?: boolean }) => {
   const align = alignmentConfig[post.brandAlignment];
   const AlignIcon = align.icon;
   const res = resonance ? resonanceConfig[resonance.score] : null;
@@ -141,15 +178,33 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
           <Activity className="w-3 h-3" />{res.label}
         </button>
       )}
-      <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold ${align.className}`}>
+      <button onClick={onBrandClick} className={`flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold ${align.className} hover:opacity-80 transition-opacity cursor-pointer`}>
         <AlignIcon className="w-3 h-3" />{align.label}
-      </div>
+      </button>
     </div>
   );
 
+  const SelectOverlay = () => (
+    <div className="absolute top-2 left-2 z-10">
+      <button
+        onClick={onSelect}
+        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? "bg-primary border-primary text-primary-foreground" : "border-muted-foreground/40 bg-card/80 hover:border-primary/60"}`}
+      >
+        {isSelected && <Check className="w-3.5 h-3.5" />}
+      </button>
+    </div>
+  );
+
+  const PublishedBanner = () => isPublished ? (
+    <div className="absolute bottom-0 left-0 right-0 z-10 bg-emerald-500/90 text-white text-[10px] font-semibold flex items-center justify-center gap-1 py-1">
+      <CheckCircle2 className="w-3 h-3" /> Published
+    </div>
+  ) : null;
+
   if (post.platform === "linkedin") {
     return (
-      <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow relative">
+      <div className={`bg-card rounded-xl border overflow-hidden hover:shadow-md transition-all relative ${isSelected ? "border-primary ring-2 ring-primary/20" : "border-border"} ${isPublished ? "opacity-80" : ""}`}>
+        <SelectOverlay />
         <BadgesRow />
         <div className="px-4 py-3 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-[hsl(210,80%,96%)] flex items-center justify-center"><Linkedin className="w-5 h-5 text-[hsl(210,80%,45%)]" /></div>
@@ -166,7 +221,8 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
         </div>
         <div className={`w-full ${post.format === "9:16" ? "aspect-[9/16] max-h-[400px]" : post.format === "1:1" ? "aspect-square max-h-[300px]" : "aspect-video max-h-[220px]"} bg-muted overflow-hidden relative`}>
           <img src={post.gifUrl} alt={post.headline} className="w-full h-full object-cover" loading="lazy" />
-          <span className="absolute top-2 left-2 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
+          <span className="absolute top-2 left-10 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
+          <PublishedBanner />
         </div>
         <div className="px-4 py-2.5 border-t border-border flex items-center justify-between">
           <p className="text-xs font-medium text-card-foreground line-clamp-1">{post.headline}</p>
@@ -187,7 +243,8 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
   if (post.platform === "meta") {
     const isReel = post.format === "9:16";
     return (
-      <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow relative">
+      <div className={`bg-card rounded-xl border overflow-hidden hover:shadow-md transition-all relative ${isSelected ? "border-primary ring-2 ring-primary/20" : "border-border"} ${isPublished ? "opacity-80" : ""}`}>
+        <SelectOverlay />
         <BadgesRow />
         <div className="px-3 py-2.5 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 via-red-500 to-yellow-500 flex items-center justify-center">
@@ -201,8 +258,9 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
         </div>
         <div className={`w-full ${isReel ? "aspect-[9/16] max-h-[420px]" : post.format === "1:1" ? "aspect-square max-h-[300px]" : "aspect-video max-h-[220px]"} bg-muted overflow-hidden relative`}>
           <img src={post.gifUrl} alt={post.headline} className="w-full h-full object-cover" loading="lazy" />
-          <span className="absolute top-2 left-2 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
+          <span className="absolute top-2 left-10 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
           {isReel && <div className="absolute bottom-3 left-3 right-3"><p className="text-xs text-white font-medium drop-shadow-lg line-clamp-2">{post.body}</p></div>}
+          <PublishedBanner />
         </div>
         {post.cta && <div className="px-3 py-2 border-t border-border"><button className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity">{post.cta}</button></div>}
         <div className="px-3 py-2 border-t border-border flex items-center justify-between text-muted-foreground">
@@ -216,7 +274,8 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
 
   // X/Twitter
   return (
-    <div className="bg-card rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow relative">
+    <div className={`bg-card rounded-xl border overflow-hidden hover:shadow-md transition-all relative ${isSelected ? "border-primary ring-2 ring-primary/20" : "border-border"} ${isPublished ? "opacity-80" : ""}`}>
+      <SelectOverlay />
       <BadgesRow />
       <div className="px-4 py-3 flex items-start gap-2.5">
         <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0"><span className="text-xs font-bold text-foreground">B</span></div>
@@ -231,6 +290,7 @@ const PostMockup = ({ post, resonance, onResonanceClick }: { post: SocialPost; r
           <div className={`w-full mt-2.5 rounded-xl overflow-hidden ${post.format === "9:16" ? "aspect-[9/16] max-h-[380px]" : post.format === "1:1" ? "aspect-square max-h-[280px]" : "aspect-video max-h-[200px]"} bg-muted relative`}>
             <img src={post.gifUrl} alt="Post media" className="w-full h-full object-cover" loading="lazy" />
             <span className="absolute bottom-2 right-2 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
+            <PublishedBanner />
           </div>
           <p className="text-[10px] text-muted-foreground mt-1.5">Promoted</p>
           <div className="flex items-center gap-5 mt-2 text-muted-foreground">
@@ -337,6 +397,13 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
   const [simProgress, setSimProgress] = useState(0);
   const [resonanceResults, setResonanceResults] = useState<ResonanceResult[]>([]);
   const [feedbackPost, setFeedbackPost] = useState<{ post: SocialPost; result: ResonanceResult } | null>(null);
+  const [brandFeedbackPost, setBrandFeedbackPost] = useState<SocialPost | null>(null);
+
+  // Activate/Publish state
+  const [selectedPostIds, setSelectedPostIds] = useState<Set<number>>(new Set());
+  const [publishedPostIds, setPublishedPostIds] = useState<Set<number>>(new Set());
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -360,8 +427,37 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
     }, 80);
   };
 
+  const togglePostSelection = (postId: number) => {
+    if (publishedPostIds.has(postId)) return;
+    setSelectedPostIds(prev => {
+      const next = new Set(prev);
+      if (next.has(postId)) next.delete(postId);
+      else next.add(postId);
+      return next;
+    });
+  };
+
+  const handleActivate = () => {
+    setConfirmModalOpen(true);
+  };
+
+  const confirmPublish = () => {
+    setPublishing(true);
+    setTimeout(() => {
+      setPublishedPostIds(prev => {
+        const next = new Set(prev);
+        selectedPostIds.forEach(id => next.add(id));
+        return next;
+      });
+      setSelectedPostIds(new Set());
+      setPublishing(false);
+      setConfirmModalOpen(false);
+    }, 1500);
+  };
+
   const filtered = activeTab === "all" ? mockPosts : mockPosts.filter((p) => p.platform === activeTab);
   const totalSelectedRoles = Object.values(selectedRoles).reduce((sum, r) => sum + r.length, 0);
+  const selectedPostsForConfirm = mockPosts.filter(p => selectedPostIds.has(p.id));
 
   const tabs: { key: typeof activeTab; label: string; count: number }[] = [
     { key: "all", label: "All Platforms", count: mockPosts.length },
@@ -413,7 +509,7 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
   return (
     <div className="flex-1 overflow-auto flex flex-col">
       <div className="px-8 py-6 flex-1">
-        {/* Header with Resonance button */}
+        {/* Header with Resonance button & Activate button */}
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3">
             <button onClick={onBack} className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
@@ -421,14 +517,27 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
             </button>
             <h2 className="text-lg font-semibold text-foreground">Generated Social Content</h2>
           </div>
-          <Button onClick={() => setResonanceModalOpen(true)} variant="outline" size="sm" className="gap-2">
-            <Activity className="w-4 h-4" />
-            Resonance Prediction
-          </Button>
+          <div className="flex items-center gap-2">
+            {selectedPostIds.size > 0 && (
+              <Button onClick={handleActivate} size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+                <Rocket className="w-4 h-4" />
+                Activate ({selectedPostIds.size})
+              </Button>
+            )}
+            <button
+              onClick={() => setResonanceModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-primary via-purple-500 to-pink-500 text-white shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30 hover:scale-[1.02] transition-all"
+            >
+              <Activity className="w-4 h-4" />
+              Resonance Prediction
+              <Sparkles className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
         <p className="text-sm text-muted-foreground mb-6 ml-10">
           {mockPosts.length} posts and ads generated for <span className="font-medium text-foreground">{projectName}</span> across LinkedIn, META & X.
           {resonanceResults.length > 0 && <span className="ml-1 text-primary font-medium">• Resonance scores applied</span>}
+          {publishedPostIds.size > 0 && <span className="ml-1 text-emerald-500 font-medium">• {publishedPostIds.size} published</span>}
         </p>
 
         <div className="flex items-center gap-1 mb-6 ml-10 bg-muted rounded-lg p-1 w-fit">
@@ -454,7 +563,18 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {posts.map((post) => {
                       const res = resonanceResults.find((r) => r.postId === post.id);
-                      return <PostMockup key={post.id} post={post} resonance={res} onResonanceClick={() => res && setFeedbackPost({ post, result: res })} />;
+                      return (
+                        <PostMockup
+                          key={post.id}
+                          post={post}
+                          resonance={res}
+                          onResonanceClick={() => res && setFeedbackPost({ post, result: res })}
+                          onBrandClick={() => setBrandFeedbackPost(post)}
+                          isSelected={selectedPostIds.has(post.id)}
+                          onSelect={() => togglePostSelection(post.id)}
+                          isPublished={publishedPostIds.has(post.id)}
+                        />
+                      );
                     })}
                   </div>
                 </div>
@@ -465,7 +585,18 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 ml-10">
             {filtered.map((post) => {
               const res = resonanceResults.find((r) => r.postId === post.id);
-              return <PostMockup key={post.id} post={post} resonance={res} onResonanceClick={() => res && setFeedbackPost({ post, result: res })} />;
+              return (
+                <PostMockup
+                  key={post.id}
+                  post={post}
+                  resonance={res}
+                  onResonanceClick={() => res && setFeedbackPost({ post, result: res })}
+                  onBrandClick={() => setBrandFeedbackPost(post)}
+                  isSelected={selectedPostIds.has(post.id)}
+                  onSelect={() => togglePostSelection(post.id)}
+                  isPublished={publishedPostIds.has(post.id)}
+                />
+              );
             })}
           </div>
         )}
@@ -488,7 +619,50 @@ const SocialPostsView = ({ projectName, onBack }: SocialPostsViewProps) => {
         </DialogContent>
       </Dialog>
 
+      {/* Resonance Feedback Modal */}
       {feedbackPost && <ResonanceFeedbackModal open={!!feedbackPost} onClose={() => setFeedbackPost(null)} result={feedbackPost.result} post={feedbackPost.post} />}
+
+      {/* Brand Alignment Modal */}
+      {brandFeedbackPost && <BrandAlignmentModal open={!!brandFeedbackPost} onClose={() => setBrandFeedbackPost(null)} post={brandFeedbackPost} />}
+
+      {/* Activate Confirmation Modal */}
+      <Dialog open={confirmModalOpen} onOpenChange={(v) => !publishing && setConfirmModalOpen(v)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Rocket className="w-5 h-5 text-emerald-500" />
+              Activate Posts
+            </DialogTitle>
+            <DialogDescription>
+              You're about to publish {selectedPostsForConfirm.length} post{selectedPostsForConfirm.length > 1 ? "s" : ""} to their respective platforms.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 max-h-[200px] overflow-auto">
+            {selectedPostsForConfirm.map(post => (
+              <div key={post.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50 border border-border">
+                <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+                  {post.platform === "linkedin" && <Linkedin className="w-4 h-4 text-[hsl(210,80%,45%)]" />}
+                  {post.platform === "meta" && <Share2 className="w-4 h-4 text-[hsl(210,80%,50%)]" />}
+                  {post.platform === "x" && <Twitter className="w-4 h-4 text-foreground" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground truncate">{post.headline || post.body.slice(0, 60) + "..."}</p>
+                  <p className="text-[10px] text-muted-foreground">{platformConfig[post.platform].label} • {post.format}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setConfirmModalOpen(false)} disabled={publishing} className="flex-1">
+              Cancel
+            </Button>
+            <Button onClick={confirmPublish} disabled={publishing} className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-700 text-white">
+              {publishing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+              {publishing ? "Publishing..." : "Confirm & Publish"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
