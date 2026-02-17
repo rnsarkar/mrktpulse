@@ -53,7 +53,7 @@ const Index = () => {
                 Thought Leadership Content
               </h1>
             </div>
-            <ScanningView projectName={projectName} />
+            <ScanningView projectName={projectName} onBack={() => setView("prompt")} onNext={(ids) => { console.log("Selected videos:", ids); }} />
           </div>
         )}
       </main>

@@ -8,7 +8,7 @@ interface VideoPlayerDialogProps {
     duration: string;
     reason: string;
     uploadedAt: string;
-    thumbnail: string;
+    gifUrl: string;
   };
   onClose: () => void;
 }
@@ -50,7 +50,8 @@ const VideoPlayerDialog = ({ video, onClose }: VideoPlayerDialogProps) => {
         <div className="flex flex-1 overflow-hidden">
           {/* Video Player */}
           <div className="flex-1 flex flex-col">
-            <div className={`relative w-full aspect-video ${video.thumbnail} flex items-center justify-center`}>
+            <div className="relative w-full aspect-video bg-muted overflow-hidden flex items-center justify-center">
+              <img src={video.gifUrl} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
                 className="w-14 h-14 rounded-full bg-card/80 backdrop-blur flex items-center justify-center hover:bg-card/90 transition-colors"
