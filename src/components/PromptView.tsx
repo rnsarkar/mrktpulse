@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Sparkles, Pencil, Cloud, HardDrive } from "lucide-react";
+import { ArrowRight, Sparkles, Pencil, Cloud, HardDrive, ChevronDown, Building2, UsersRound } from "lucide-react";
 import { AttachButton, ConnectSourceDialog } from "@/components/ConnectSource";
 
 interface PromptViewProps {
@@ -7,6 +7,28 @@ interface PromptViewProps {
   onProjectNameChange: (name: string) => void;
   onGenerate: () => void;
 }
+
+const brandOptions = [
+  "HealthFirst Corporate",
+  "HealthFirst Cardiology",
+  "HealthFirst Oncology",
+  "MedLine Pharma",
+  "WellCare Insurance",
+  "BioGen Therapeutics",
+  "NovaCare Devices",
+];
+
+const personaOptions = [
+  "Families",
+  "Students",
+  "Teachers",
+  "Weight Watchers",
+  "Senior Citizens",
+  "Healthcare Professionals",
+  "Fitness Enthusiasts",
+  "New Parents",
+  "Chronic Care Patients",
+];
 
 const suggestions = [
   "Write a thought leadership article about AI in healthcare",
@@ -20,6 +42,10 @@ const PromptView = ({ projectName, onProjectNameChange, onGenerate }: PromptView
   const [isEditingName, setIsEditingName] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
   const [editValue, setEditValue] = useState(projectName);
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedPersona, setSelectedPersona] = useState("");
+  const [brandOpen, setBrandOpen] = useState(false);
+  const [personaOpen, setPersonaOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -79,9 +105,66 @@ const PromptView = ({ projectName, onProjectNameChange, onGenerate }: PromptView
               What would you like to create?
             </h2>
           </div>
-          <p className="text-sm text-muted-foreground mb-5">
+          <p className="text-sm text-muted-foreground mb-4">
             Describe your thought leadership content and we'll generate it for you.
           </p>
+
+          {/* Brand & Persona selectors */}
+          <div className="flex items-center gap-3 mb-5">
+            {/* Brand dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => { setBrandOpen(!brandOpen); setPersonaOpen(false); }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-primary/30 transition-colors min-w-[180px]"
+              >
+                <Building2 className="w-4 h-4 text-muted-foreground" />
+                <span className={selectedBrand ? "text-foreground" : "text-muted-foreground"}>
+                  {selectedBrand || "Select Brand"}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto" />
+              </button>
+              {brandOpen && (
+                <div className="absolute z-20 top-full mt-1 left-0 w-56 bg-card border border-border rounded-lg shadow-lg py-1 max-h-52 overflow-auto">
+                  {brandOptions.map((b) => (
+                    <button
+                      key={b}
+                      onClick={() => { setSelectedBrand(b); setBrandOpen(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors ${selectedBrand === b ? "text-primary font-medium" : "text-foreground"}`}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Persona dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => { setPersonaOpen(!personaOpen); setBrandOpen(false); }}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:border-primary/30 transition-colors min-w-[180px]"
+              >
+                <UsersRound className="w-4 h-4 text-muted-foreground" />
+                <span className={selectedPersona ? "text-foreground" : "text-muted-foreground"}>
+                  {selectedPersona || "Select Persona"}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground ml-auto" />
+              </button>
+              {personaOpen && (
+                <div className="absolute z-20 top-full mt-1 left-0 w-56 bg-card border border-border rounded-lg shadow-lg py-1 max-h-52 overflow-auto">
+                  {personaOptions.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => { setSelectedPersona(p); setPersonaOpen(false); }}
+                      className={`w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors ${selectedPersona === p ? "text-primary font-medium" : "text-foreground"}`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Prompt input */}
           <div className="relative mb-6">
