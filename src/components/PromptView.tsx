@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowRight, Sparkles, Pencil } from "lucide-react";
+import { AttachButton, ConnectSourceDialog } from "@/components/ConnectSource";
 
 interface PromptViewProps {
   projectName: string;
@@ -16,6 +17,7 @@ const suggestions = [
 const PromptView = ({ projectName, onProjectNameChange }: PromptViewProps) => {
   const [prompt, setPrompt] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
+  const [connectOpen, setConnectOpen] = useState(false);
   const [editValue, setEditValue] = useState(projectName);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -87,14 +89,26 @@ const PromptView = ({ projectName, onProjectNameChange }: PromptViewProps) => {
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe what you'd like to generate..."
               rows={5}
-              className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
+              className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 pb-12 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
             />
-            <button
-              disabled={!prompt.trim()}
-              className="absolute bottom-3 right-3 p-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90 transition-opacity"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+              <AttachButton
+                onUploadClick={() => {
+                  // File upload trigger — placeholder for now
+                  const input = document.createElement("input");
+                  input.type = "file";
+                  input.multiple = true;
+                  input.click();
+                }}
+                onConnectClick={() => setConnectOpen(true)}
+              />
+              <button
+                disabled={!prompt.trim()}
+                className="p-2 rounded-lg bg-primary text-primary-foreground disabled:opacity-40 hover:opacity-90 transition-opacity"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Suggestions */}
@@ -114,6 +128,8 @@ const PromptView = ({ projectName, onProjectNameChange }: PromptViewProps) => {
           </div>
         </div>
       </div>
+
+      <ConnectSourceDialog open={connectOpen} onClose={() => setConnectOpen(false)} />
     </div>
   );
 };

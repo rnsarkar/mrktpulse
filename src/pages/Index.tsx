@@ -23,7 +23,10 @@ const Index = () => {
               <ThoughtLeadershipCard
                 title="Thought Leadership Content"
                 subtitle="Create AI-powered content"
-                onClick={() => setView("prompt")}
+                onClick={() => {
+                  setView("prompt");
+                  setActiveItem("projects");
+                }}
               />
             </div>
           </div>
