@@ -7,7 +7,7 @@ interface ConnectSourceDialogProps {
 }
 
 const sources = [
-  { id: "upload", label: "Upload Documents", description: "Upload files from your computer", icon: Upload },
+  { id: "upload", label: "Upload Briefs", description: "Upload brief files from your computer", icon: Upload },
   { id: "google-drive", label: "Google Drive", description: "Connect your Google Drive account", icon: Cloud },
   { id: "onedrive", label: "OneDrive", description: "Connect your Microsoft OneDrive", icon: FolderOpen },
   { id: "frame-io", label: "Frame.io", description: "Connect your Frame.io workspace", icon: Film },
@@ -105,7 +105,7 @@ const AttachButton = ({ onUploadClick, onConnectClick }: AttachButtonProps) => {
               className="w-full flex items-center gap-3 px-4 py-3 text-sm text-card-foreground hover:bg-accent transition-colors"
             >
               <Upload className="w-4 h-4 text-muted-foreground" />
-              Upload Documents
+              Upload Briefs
             </button>
             <div className="h-px bg-border" />
             <button
