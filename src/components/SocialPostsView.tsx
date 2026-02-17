@@ -1,8 +1,36 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check, Zap, CheckCircle2, Rocket } from "lucide-react";
+import { ArrowLeft, Linkedin, Twitter, Share2, ThumbsUp, MessageCircle, Repeat2, Heart, Bookmark, MoreHorizontal, Loader2, Sparkles, Send, ChevronDown, Shield, ShieldCheck, ShieldAlert, Activity, ChevronUp, Check, Zap, CheckCircle2, Rocket, BarChart3, Users, TrendingUp, Lightbulb, Target, Presentation, Stethoscope, Film, LineChart, PieChart, Brain, Megaphone } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+
+const gradientThemes: Record<string, { bg: string; icon: React.ElementType; label: string }> = {
+  "gradient-1": { bg: "from-[hsl(210,60%,20%)] via-[hsl(200,50%,35%)] to-[hsl(180,40%,45%)]", icon: BarChart3, label: "Productivity Report" },
+  "gradient-2": { bg: "from-[hsl(250,50%,25%)] via-[hsl(240,45%,40%)] to-[hsl(220,50%,50%)]", icon: Presentation, label: "Enterprise AI" },
+  "gradient-3": { bg: "from-[hsl(340,40%,25%)] via-[hsl(350,35%,40%)] to-[hsl(10,45%,50%)]", icon: Users, label: "CMO Interview" },
+  "gradient-4": { bg: "from-[hsl(160,40%,20%)] via-[hsl(170,35%,35%)] to-[hsl(180,30%,45%)]", icon: TrendingUp, label: "Market Insights" },
+  "gradient-5": { bg: "from-[hsl(270,45%,25%)] via-[hsl(280,40%,38%)] to-[hsl(300,35%,48%)]", icon: Target, label: "AI Cost Reduction" },
+  "gradient-6": { bg: "from-[hsl(200,50%,22%)] via-[hsl(210,45%,36%)] to-[hsl(230,40%,48%)]", icon: PieChart, label: "Product Demo" },
+  "gradient-7": { bg: "from-[hsl(170,45%,20%)] via-[hsl(180,40%,32%)] to-[hsl(190,35%,44%)]", icon: Stethoscope, label: "Healthcare AI" },
+  "gradient-8": { bg: "from-[hsl(30,45%,22%)] via-[hsl(25,40%,36%)] to-[hsl(20,35%,48%)]", icon: Film, label: "Team Milestone" },
+  "gradient-9": { bg: "from-[hsl(210,55%,18%)] via-[hsl(220,48%,32%)] to-[hsl(240,42%,46%)]", icon: Lightbulb, label: "CEO Keynote" },
+  "gradient-10": { bg: "from-[hsl(280,40%,22%)] via-[hsl(290,35%,36%)] to-[hsl(310,30%,48%)]", icon: LineChart, label: "Attribution" },
+  "gradient-11": { bg: "from-[hsl(350,45%,22%)] via-[hsl(0,40%,35%)] to-[hsl(15,35%,48%)]", icon: Megaphone, label: "Leadership" },
+  "gradient-12": { bg: "from-[hsl(220,50%,20%)] via-[hsl(230,45%,34%)] to-[hsl(250,40%,46%)]", icon: Brain, label: "Q3 Data Report" },
+};
+
+const GradientThumbnail = ({ id }: { id: string }) => {
+  const theme = gradientThemes[id] || gradientThemes["gradient-1"];
+  const Icon = theme.icon;
+  return (
+    <div className={`w-full h-full bg-gradient-to-br ${theme.bg} flex flex-col items-center justify-center gap-3`}>
+      <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
+        <Icon className="w-7 h-7 text-white/80" />
+      </div>
+      <span className="text-[11px] font-medium text-white/60 tracking-wide uppercase">{theme.label}</span>
+    </div>
+  );
+};
 
 interface SocialPost {
   id: number;
@@ -54,18 +82,18 @@ const mockResonanceResults: ResonanceResult[] = [
 ];
 
 const mockPosts: SocialPost[] = [
-  { id: 1, platform: "linkedin", format: "1:1", headline: "Ten ways to improve customer productivity and see results", body: "We reduced content production costs by 60% with AI. Here's exactly how.\n\nMost companies are spending more on content, not less. We went the other direction.\n\nBy implementing AI-driven content analysis across our video library, we found the 'aha moments' that audiences actually care about.", cta: "Learn more", hashtags: ["#AI", "#ContentStrategy", "#ThoughtLeadership"], gifUrl: "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "high" },
-  { id: 2, platform: "linkedin", format: "16:9", headline: "Experience the power of enterprise AI. Join us at this year's global conference.", body: "I said this on a panel last week and the room went silent.\n\nBut here's the truth: last-touch attribution is lying to you about what's actually driving revenue.\n\nOur data shows that thought leadership content influences 78% of enterprise buying decisions.", cta: "Register", hashtags: ["#B2BMarketing", "#Attribution", "#DataDriven"], gifUrl: "https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif", brandName: "Techcore AI", followerCount: "8,234 followers", brandAlignment: "high" },
-  { id: 3, platform: "linkedin", format: "9:16", headline: "Our CMO admitted we got it completely wrong. Here's what happened next.", body: "Vulnerability builds trust.\n\nWhen our CMO went on camera and said 'We got it completely wrong' — our engagement rate 5x'd overnight.\n\nThis 19-second clip generated more leads than our entire Q2 campaign.", cta: "Watch the Full Interview", hashtags: ["#Leadership", "#Authenticity", "#CMO"], gifUrl: "https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "medium" },
-  { id: 4, platform: "linkedin", format: "1:1", headline: "3 market insights that contradicted everything we assumed", body: "We ran the numbers on Q3 and the data told a completely different story.\n\n1️⃣ Remote workers are MORE productive (not less) — by 23%\n2️⃣ Enterprise buyers trust video over whitepapers 4:1\n3️⃣ The best-performing content is under 30 seconds", cta: "Get the Full Report", hashtags: ["#MarketInsights", "#DataDriven", "#B2B"], gifUrl: "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "high" },
-  { id: 5, platform: "meta", format: "9:16", headline: "60% cost reduction. One AI tool. Here's the proof.", body: "Stop overspending on content that doesn't convert.\n\nThis CEO just revealed how AI helped them find the exact moments that drive engagement — and cut everything else.", cta: "Shop now", hashtags: ["#AI", "#ContentMarketing", "#Innovation"], gifUrl: "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif", brandName: "laleurbeauty", followerCount: "", brandAlignment: "high" },
-  { id: 6, platform: "meta", format: "1:1", headline: "This live demo shocked the entire audience", body: "When the dashboard revealed what users were ACTUALLY doing — the room gasped.\n\nSometimes the data tells a story nobody expected.", cta: "Shop now", hashtags: ["#DataAnalytics", "#ProductDemo", "#Tech"], gifUrl: "https://media.giphy.com/media/3oKIPnAiaMCJ8rJ1wQ/giphy.gif", brandName: "laleurbeauty", followerCount: "", brandAlignment: "medium" },
-  { id: 7, platform: "meta", format: "16:9", headline: "AI diagnostics outperformed humans by 23%. Here's the clip.", body: "This healthcare executive dropped a stat that changes everything.\n\nAI isn't just matching human performance — it's exceeding it.", cta: "Learn More", hashtags: ["#Healthcare", "#AI", "#Innovation"], gifUrl: "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif", brandName: "laleurbeauty", followerCount: "", brandAlignment: "low" },
-  { id: 8, platform: "meta", format: "9:16", headline: "Behind the scenes: Watch a team hit their biggest milestone", body: "Raw, unfiltered joy.\n\nNo script. No polish. Just a team celebrating something real.\n\nThis 15-second clip is a reminder of why we do what we do.", cta: "Follow for More", hashtags: ["#BehindTheScenes", "#TeamCulture", "#Startup"], gifUrl: "https://media.giphy.com/media/3o7btNhMBytxAM6YBa/giphy.gif", brandName: "laleurbeauty", followerCount: "", brandAlignment: "high" },
-  { id: 9, platform: "x", format: "16:9", headline: "", body: "☕ Love coffee? We've partnered with local coffee bean roasters to bring you the best flavors in San Francisco.\n\nThis CEO's keynote clip on AI cost reduction is going viral — 60% savings, 3x engagement.\n\nThe clip that started it all 👇", cta: "", hashtags: ["#AI", "#ContentStrategy"], gifUrl: "https://media.giphy.com/media/3oKIPEqDGUULpEU0aQ/giphy.gif", brandName: "The Barista Bar", followerCount: "@BaristaBar", brandAlignment: "high" },
-  { id: 10, platform: "x", format: "1:1", headline: "", body: "Hot take: Last-touch attribution is lying to you.\n\n78% of enterprise buying decisions are influenced by thought leadership.\n\nBut your attribution model gives it 0% credit.\n\nThis panelist called it 'fundamentally broken' — and nobody disagreed.", cta: "", hashtags: ["#Marketing", "#Attribution"], gifUrl: "https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "medium" },
-  { id: 11, platform: "x", format: "9:16", headline: "", body: "A CMO said 'we got it completely wrong' on camera.\n\nEngagement 5x'd.\n\nVulnerability > perfection.\n\nThis 19-second clip outperformed their entire Q2 campaign.", cta: "", hashtags: ["#Leadership", "#Marketing"], gifUrl: "https://media.giphy.com/media/l4FGuhL4U2WyjdkaY/giphy.gif", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "high" },
-  { id: 12, platform: "x", format: "1:1", headline: "", body: "3 stats from Q3 that contradicted everything we assumed:\n\n1. Remote workers are 23% MORE productive\n2. Enterprise buyers trust video 4:1 over whitepapers\n3. Best-performing content is under 30 seconds\n\nThe data doesn't lie 📊", cta: "", hashtags: ["#Data", "#Trends"], gifUrl: "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "low" },
+  { id: 1, platform: "linkedin", format: "1:1", headline: "Ten ways to improve customer productivity and see results", body: "We reduced content production costs by 60% with AI. Here's exactly how.\n\nMost companies are spending more on content, not less. We went the other direction.\n\nBy implementing AI-driven content analysis across our video library, we found the 'aha moments' that audiences actually care about.", cta: "Learn more", hashtags: ["#AI", "#ContentStrategy", "#ThoughtLeadership"], gifUrl: "gradient-1", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "high" },
+  { id: 2, platform: "linkedin", format: "16:9", headline: "Experience the power of enterprise AI. Join us at this year's global conference.", body: "I said this on a panel last week and the room went silent.\n\nBut here's the truth: last-touch attribution is lying to you about what's actually driving revenue.\n\nOur data shows that thought leadership content influences 78% of enterprise buying decisions.", cta: "Register", hashtags: ["#B2BMarketing", "#Attribution", "#DataDriven"], gifUrl: "gradient-2", brandName: "Techcore AI", followerCount: "8,234 followers", brandAlignment: "high" },
+  { id: 3, platform: "linkedin", format: "9:16", headline: "Our CMO admitted we got it completely wrong. Here's what happened next.", body: "Vulnerability builds trust.\n\nWhen our CMO went on camera and said 'We got it completely wrong' — our engagement rate 5x'd overnight.\n\nThis 19-second clip generated more leads than our entire Q2 campaign.", cta: "Watch the Full Interview", hashtags: ["#Leadership", "#Authenticity", "#CMO"], gifUrl: "gradient-3", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "medium" },
+  { id: 4, platform: "linkedin", format: "1:1", headline: "3 market insights that contradicted everything we assumed", body: "We ran the numbers on Q3 and the data told a completely different story.\n\n1️⃣ Remote workers are MORE productive (not less) — by 23%\n2️⃣ Enterprise buyers trust video over whitepapers 4:1\n3️⃣ The best-performing content is under 30 seconds", cta: "Get the Full Report", hashtags: ["#MarketInsights", "#DataDriven", "#B2B"], gifUrl: "gradient-4", brandName: "Your Brand", followerCount: "12,847 followers", brandAlignment: "high" },
+  { id: 5, platform: "meta", format: "9:16", headline: "60% cost reduction. One AI tool. Here's the proof.", body: "Stop overspending on content that doesn't convert.\n\nThis CEO just revealed how AI helped them find the exact moments that drive engagement — and cut everything else.", cta: "Shop now", hashtags: ["#AI", "#ContentMarketing", "#Innovation"], gifUrl: "gradient-5", brandName: "laleurbeauty", followerCount: "", brandAlignment: "high" },
+  { id: 6, platform: "meta", format: "1:1", headline: "This live demo shocked the entire audience", body: "When the dashboard revealed what users were ACTUALLY doing — the room gasped.\n\nSometimes the data tells a story nobody expected.", cta: "Shop now", hashtags: ["#DataAnalytics", "#ProductDemo", "#Tech"], gifUrl: "gradient-6", brandName: "laleurbeauty", followerCount: "", brandAlignment: "medium" },
+  { id: 7, platform: "meta", format: "16:9", headline: "AI diagnostics outperformed humans by 23%. Here's the clip.", body: "This healthcare executive dropped a stat that changes everything.\n\nAI isn't just matching human performance — it's exceeding it.", cta: "Learn More", hashtags: ["#Healthcare", "#AI", "#Innovation"], gifUrl: "gradient-7", brandName: "laleurbeauty", followerCount: "", brandAlignment: "low" },
+  { id: 8, platform: "meta", format: "9:16", headline: "Behind the scenes: Watch a team hit their biggest milestone", body: "Raw, unfiltered joy.\n\nNo script. No polish. Just a team celebrating something real.\n\nThis 15-second clip is a reminder of why we do what we do.", cta: "Follow for More", hashtags: ["#BehindTheScenes", "#TeamCulture", "#Startup"], gifUrl: "gradient-8", brandName: "laleurbeauty", followerCount: "", brandAlignment: "high" },
+  { id: 9, platform: "x", format: "16:9", headline: "", body: "☕ Love coffee? We've partnered with local coffee bean roasters to bring you the best flavors in San Francisco.\n\nThis CEO's keynote clip on AI cost reduction is going viral — 60% savings, 3x engagement.\n\nThe clip that started it all 👇", cta: "", hashtags: ["#AI", "#ContentStrategy"], gifUrl: "gradient-9", brandName: "The Barista Bar", followerCount: "@BaristaBar", brandAlignment: "high" },
+  { id: 10, platform: "x", format: "1:1", headline: "", body: "Hot take: Last-touch attribution is lying to you.\n\n78% of enterprise buying decisions are influenced by thought leadership.\n\nBut your attribution model gives it 0% credit.\n\nThis panelist called it 'fundamentally broken' — and nobody disagreed.", cta: "", hashtags: ["#Marketing", "#Attribution"], gifUrl: "gradient-10", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "medium" },
+  { id: 11, platform: "x", format: "9:16", headline: "", body: "A CMO said 'we got it completely wrong' on camera.\n\nEngagement 5x'd.\n\nVulnerability > perfection.\n\nThis 19-second clip outperformed their entire Q2 campaign.", cta: "", hashtags: ["#Leadership", "#Marketing"], gifUrl: "gradient-11", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "high" },
+  { id: 12, platform: "x", format: "1:1", headline: "", body: "3 stats from Q3 that contradicted everything we assumed:\n\n1. Remote workers are 23% MORE productive\n2. Enterprise buyers trust video 4:1 over whitepapers\n3. Best-performing content is under 30 seconds\n\nThe data doesn't lie 📊", cta: "", hashtags: ["#Data", "#Trends"], gifUrl: "gradient-12", brandName: "Your Brand", followerCount: "@YourBrand", brandAlignment: "low" },
 ];
 
 const alignmentConfig = {
@@ -220,7 +248,7 @@ const PostMockup = ({ post, resonance, onResonanceClick, onBrandClick, isSelecte
           {post.hashtags.length > 0 && <p className="text-xs text-[hsl(210,80%,45%)] mt-1.5">{post.hashtags.join(" ")}</p>}
         </div>
         <div className={`w-full ${post.format === "9:16" ? "aspect-[9/16] max-h-[400px]" : post.format === "1:1" ? "aspect-square max-h-[300px]" : "aspect-video max-h-[220px]"} bg-muted overflow-hidden relative`}>
-          <img src={post.gifUrl} alt={post.headline} className="w-full h-full object-cover" loading="lazy" />
+          <GradientThumbnail id={post.gifUrl} />
           <span className="absolute top-2 left-10 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
           <PublishedBanner />
         </div>
@@ -257,7 +285,7 @@ const PostMockup = ({ post, resonance, onResonanceClick, onBrandClick, isSelecte
           <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
         </div>
         <div className={`w-full ${isReel ? "aspect-[9/16] max-h-[420px]" : post.format === "1:1" ? "aspect-square max-h-[300px]" : "aspect-video max-h-[220px]"} bg-muted overflow-hidden relative`}>
-          <img src={post.gifUrl} alt={post.headline} className="w-full h-full object-cover" loading="lazy" />
+          <GradientThumbnail id={post.gifUrl} />
           <span className="absolute top-2 left-10 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
           {isReel && <div className="absolute bottom-3 left-3 right-3"><p className="text-xs text-white font-medium drop-shadow-lg line-clamp-2">{post.body}</p></div>}
           <PublishedBanner />
@@ -288,7 +316,7 @@ const PostMockup = ({ post, resonance, onResonanceClick, onBrandClick, isSelecte
           <p className="text-xs text-card-foreground whitespace-pre-line leading-relaxed mt-1.5">{post.body}</p>
           {post.hashtags.length > 0 && <p className="text-xs text-[hsl(210,80%,50%)] mt-1">{post.hashtags.join(" ")}</p>}
           <div className={`w-full mt-2.5 rounded-xl overflow-hidden ${post.format === "9:16" ? "aspect-[9/16] max-h-[380px]" : post.format === "1:1" ? "aspect-square max-h-[280px]" : "aspect-video max-h-[200px]"} bg-muted relative`}>
-            <img src={post.gifUrl} alt="Post media" className="w-full h-full object-cover" loading="lazy" />
+            <GradientThumbnail id={post.gifUrl} />
             <span className="absolute bottom-2 right-2 text-[10px] font-medium bg-foreground/70 text-background px-1.5 py-0.5 rounded">{post.format}</span>
             <PublishedBanner />
           </div>
