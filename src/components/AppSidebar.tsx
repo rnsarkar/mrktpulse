@@ -9,7 +9,6 @@ import {
   Settings,
   Bell,
   ChevronDown,
-  Sparkles,
   BarChart3,
 } from "lucide-react";
 
@@ -25,7 +24,6 @@ const mainNav = [
   { id: "brands", label: "Brands", icon: Users },
   { id: "aeo-analysis", label: "AEO Analysis", icon: BarChart3 },
   { id: "audiences", label: "Audiences", icon: Users2 },
-  { id: "ai-audience", label: "AI Audience", icon: Sparkles },
 ];
 
 const otherNav = [
