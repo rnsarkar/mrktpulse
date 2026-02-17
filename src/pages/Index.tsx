@@ -11,6 +11,7 @@ const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts" | "aeo">("home");
   const [projectName, setProjectName] = useState("Untitled Project");
+  const [initialPrompt, setInitialPrompt] = useState("");
 
   return (
     <div className="flex h-screen bg-canvas">
@@ -42,6 +43,7 @@ const Index = () => {
             projectName={projectName}
             onProjectNameChange={setProjectName}
             onGenerate={() => setView("scanning")}
+            initialPrompt={initialPrompt}
           />
         )}
 
@@ -97,6 +99,7 @@ const Index = () => {
           <AEOAnalysisView
             onStartWorkflow={(topic) => {
               setProjectName(topic);
+              setInitialPrompt(`Create thought leadership content about "${topic}". Generate compelling ads, social posts, and blog content optimized for maximum engagement and brand visibility across LinkedIn, META, and X platforms.`);
               setView("prompt");
               setActiveItem("projects");
             }}
