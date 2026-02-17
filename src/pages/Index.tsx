@@ -5,10 +5,11 @@ import PromptView from "@/components/PromptView";
 import ScanningView from "@/components/ScanningView";
 import ClipAnalysisView from "@/components/ClipAnalysisView";
 import SocialPostsView from "@/components/SocialPostsView";
+import AEOAnalysisView from "@/components/AEOAnalysisView";
 
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
-  const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts">("home");
+  const [view, setView] = useState<"home" | "prompt" | "scanning" | "clips" | "posts" | "aeo">("home");
   const [projectName, setProjectName] = useState("Untitled Project");
 
   return (
@@ -16,6 +17,7 @@ const Index = () => {
       <AppSidebar activeItem={activeItem} onItemClick={(item) => {
         setActiveItem(item);
         if (item === "home") setView("home");
+        if (item === "aeo-analysis") setView("aeo");
       }} />
 
       <main className="flex-1 overflow-auto flex flex-col">
@@ -89,6 +91,16 @@ const Index = () => {
             </div>
             <SocialPostsView projectName={projectName} onBack={() => setView("clips")} />
           </div>
+        )}
+
+        {view === "aeo" && (
+          <AEOAnalysisView
+            onStartWorkflow={(topic) => {
+              setProjectName(topic);
+              setView("prompt");
+              setActiveItem("projects");
+            }}
+          />
         )}
       </main>
     </div>
