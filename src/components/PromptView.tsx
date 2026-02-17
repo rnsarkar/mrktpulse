@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowRight, Sparkles, Pencil } from "lucide-react";
+import { ArrowRight, Sparkles, Pencil, Cloud, HardDrive } from "lucide-react";
 import { AttachButton, ConnectSourceDialog } from "@/components/ConnectSource";
 
 interface PromptViewProps {
@@ -93,16 +93,23 @@ const PromptView = ({ projectName, onProjectNameChange, onGenerate }: PromptView
               className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 pb-12 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all shadow-sm"
             />
             <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-              <AttachButton
-                onUploadClick={() => {
-                  // File upload trigger — placeholder for now
-                  const input = document.createElement("input");
-                  input.type = "file";
-                  input.multiple = true;
-                  input.click();
-                }}
-                onConnectClick={() => setConnectOpen(true)}
-              />
+              <div className="flex items-center gap-2">
+                <AttachButton
+                  onUploadClick={() => {
+                    const input = document.createElement("input");
+                    input.type = "file";
+                    input.multiple = true;
+                    input.click();
+                  }}
+                  onConnectClick={() => setConnectOpen(true)}
+                />
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-accent text-muted-foreground px-2 py-1 rounded-md border border-border">
+                  <Cloud className="w-3 h-3" /> Google Drive
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-accent text-muted-foreground px-2 py-1 rounded-md border border-border">
+                  <HardDrive className="w-3 h-3" /> S3 Bucket
+                </span>
+              </div>
               <button
                 disabled={!prompt.trim()}
                 onClick={onGenerate}
